@@ -177,7 +177,7 @@ function generateReadme(platforms: ExportPlatforms): string {
 5. icon-16.png is used in the title bar`);
   }
 
-  sections.push(`Need help? Visit https://appassetgen.com`);
+  sections.push(`Need help? Visit https://github.com/zoddiacc/appassetgen`);
 
   return sections.join("\n\n");
 }
