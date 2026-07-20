@@ -201,11 +201,6 @@ function AboutDialogContent({ onClose }: { onClose: () => void }) {
 
 export default function AboutDialog() {
   const [showDialog, setShowDialog] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <>
@@ -217,8 +212,7 @@ export default function AboutDialog() {
       </button>
 
       {/* Render dialog at body level using portal */}
-      {mounted &&
-        showDialog &&
+      {showDialog &&
         createPortal(
           <AboutDialogContent onClose={() => setShowDialog(false)} />,
           document.body

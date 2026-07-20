@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import ImageUpload from "@/components/editor/ImageUpload";
 import Canvas from "@/components/editor/Canvas";
@@ -29,8 +29,6 @@ export default function EditorPage() {
 
   // V2 state
   const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
-  const [validationWarnings, setValidationWarnings] = useState<ValidationWarning[]>([]);
-  const [contrastScore, setContrastScore] = useState<number | undefined>(undefined);
   const [exportPlatforms, setExportPlatforms] = useState<ExportPlatforms>(DEFAULT_EXPORT_PLATFORMS);
   const [customSizes, setCustomSizes] = useState<CustomSize[]>([]);
   const [previewMode, setPreviewMode] = useState<"grid" | "device">("grid");
@@ -40,8 +38,6 @@ export default function EditorPage() {
     setImageUrl(dataUrl);
     setSettings(DEFAULT_SETTINGS);
     setImageElement(null);
-    setValidationWarnings([]);
-    setContrastScore(undefined);
   }, []);
 
   const handleNewIcon = useCallback(() => {
@@ -49,8 +45,6 @@ export default function EditorPage() {
     setSettings(DEFAULT_SETTINGS);
     setImageElement(null);
     setImageMetadata(null);
-    setValidationWarnings([]);
-    setContrastScore(undefined);
     setCustomSizes([]);
   }, []);
 
@@ -62,9 +56,11 @@ export default function EditorPage() {
     setImageMetadata(metadata);
   }, []);
 
-  // Run validation when the image, its metadata, or the padding changes
-  useEffect(() => {
-    if (!imageElement || !imageMetadata) return;
+  // Validation is pure derived state from the image, its metadata, and the padding
+  const { validationWarnings, contrastScore } = useMemo(() => {
+    if (!imageElement || !imageMetadata) {
+      return { validationWarnings: [] as ValidationWarning[], contrastScore: undefined };
+    }
     const warnings = validateImage(imageElement, imageMetadata);
     const contrast = checkContrast(imageElement);
     if (contrast.warning) {
@@ -78,8 +74,7 @@ export default function EditorPage() {
           "Icon content extends beyond the circular safe zone. Android launchers and circular masks may crop it — consider more padding.",
       });
     }
-    setValidationWarnings(warnings);
-    setContrastScore(contrast.score);
+    return { validationWarnings: warnings, contrastScore: contrast.score };
   }, [imageElement, imageMetadata, settings.padding]);
 
   return (
