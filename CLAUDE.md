@@ -8,7 +8,7 @@ A client-side web app that generates all required iOS, Android, Web/PWA, and Win
 
 ## Tech Stack
 
-- **Next.js 14** (App Router, TypeScript) — frontend framework
+- **Next.js 15** (App Router, TypeScript, React 19) — frontend framework
 - **Tailwind CSS v3** — styling (accent colors via CSS variable RGB channels so opacity modifiers work per-theme)
 - **JetBrains Mono** — sole typeface, loaded via `next/font/google`
 - **HTML Canvas API** — image manipulation and icon generation
@@ -133,7 +133,7 @@ The Contents.json maps 14 entries (iPhone + iPad + App Store) to these 10 files.
 
 ## Troubleshooting
 
-- **ESLint version warning**: Using ESLint 8 for Next.js 14 compatibility. ESLint 9 has breaking changes with `useEslintrc`.
+- **ESLint**: ESLint 8 + eslint-config-next 15 (matches the Next major). Upgrade both together.
 - **`<img>` warning**: PreviewGrid/ImageUpload use `<img>` intentionally — images are data URLs from canvas, not remote assets.
-- **Tailwind v3**: Using Tailwind CSS v3 (not v4) for stability with the Next.js 14 + PostCSS setup.
+- **Tailwind v3**: Deliberately on v3, not v4 — v4 changes the PostCSS setup and config format. Close Dependabot Tailwind-4 PRs unless doing the migration properly.
 - **`canvas.filter` in Safari < 17.4**: brightness/contrast edits and blur backgrounds are silently ignored there (no fallback implemented).
