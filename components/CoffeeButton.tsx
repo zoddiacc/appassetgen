@@ -217,11 +217,6 @@ function CoffeeDialog({ onClose }: { onClose: () => void }) {
 
 export default function CoffeeButton({ variant = "icon" }: CoffeeButtonProps) {
   const [showDialog, setShowDialog] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <>
@@ -276,8 +271,7 @@ export default function CoffeeButton({ variant = "icon" }: CoffeeButtonProps) {
       )}
 
       {/* Render dialog at body level using portal */}
-      {mounted &&
-        showDialog &&
+      {showDialog &&
         createPortal(
           <CoffeeDialog onClose={() => setShowDialog(false)} />,
           document.body
