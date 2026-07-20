@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * AppAssetGen design system — IDE/terminal aesthetic.
+ * Typeface: JetBrains Mono (loaded via next/font, exposed as --font-mono).
+ * Accent colors are stored as RGB channels so Tailwind opacity modifiers
+ * (primary/10 etc.) work and adapt per theme.
+ */
+
+/* Light theme (default) */
+:root {
+  --primary-rgb: 13 148 136;   /* teal-600 */
+  --accent-rgb: 8 145 178;     /* cyan-600 */
+
+  --color-bg: #F6F8F7;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-light: #EDF1EF;
+  --color-bg-nav: rgba(255, 255, 255, 0.85);
+  --color-border: #DCE2DF;
+  --color-border-hover: #C0CAC6;
+  --color-text-primary: #131C19;
+  --color-text-secondary: #3D4A46;
+  --color-text-muted: #6B7A74;
+  --color-text-faint: #97A39E;
+  --color-checkerboard-a: #E4E9E7;
+  --color-checkerboard-b: #D8DEDB;
+  --grid-line: rgba(19, 28, 25, 0.045);
+  --terminal-bg: #10201C;
+  --hero-glow-a: 0.05;
+  --hero-glow-b: 0.04;
+}
+
+/* Dark theme */
+.dark {
+  --primary-rgb: 45 212 191;   /* teal-400 */
+  --accent-rgb: 34 211 238;    /* cyan-400 */
+
+  --color-bg: #0A0E0D;
+  --color-bg-surface: #101514;
+  --color-bg-surface-light: #171D1B;
+  --color-bg-nav: rgba(16, 21, 20, 0.85);
+  --color-border: #232B29;
+  --color-border-hover: #33403C;
+  --color-text-primary: #E8EDEB;
+  --color-text-secondary: #C2CCC8;
+  --color-text-muted: #8A9591;
+  --color-text-faint: #5C6663;
+  --color-checkerboard-a: #171D1B;
+  --color-checkerboard-b: #1D2422;
+  --grid-line: rgba(232, 237, 235, 0.035);
+  --terminal-bg: #0C1110;
+  --hero-glow-a: 0.10;
+  --hero-glow-b: 0.06;
+}
+
+html,
+body {
+  font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+::selection {
+  background: rgb(var(--primary-rgb) / 0.25);
+}
+
+/* Checkerboard for transparent previews */
+.checkerboard {
+  background-image:
+    linear-gradient(45deg, var(--color-checkerboard-a) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--color-checkerboard-a) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--color-checkerboard-a) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--color-checkerboard-a) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  background-color: var(--color-checkerboard-b);
+}
+
+/* Blueprint grid backdrop for landing sections */
+.grid-bg {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Card border used across landing + dialogs (name kept from v1 for reuse) */
+.gradient-border {
+  position: relative;
+  border-radius: 8px;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s ease;
+}
+.gradient-border:hover {
+  border-color: rgb(var(--primary-rgb) / 0.4);
+}
+
+/* Background glow for landing hero */
+.hero-glow {
+  background:
+    radial-gradient(ellipse at 15% 85%, rgb(var(--primary-rgb) / var(--hero-glow-a)) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 10%, rgb(var(--accent-rgb) / var(--hero-glow-b)) 0%, transparent 50%),
+    var(--color-bg);
+}
+
+/* Terminal window (hero mockup) */
+.terminal-window {
+  background: var(--terminal-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px -24px rgb(0 0 0 / 0.5);
+}
+.terminal-line {
+  display: block;
+  font-size: 12px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Blinking cursor */
+.cursor-blink {
+  display: inline-block;
+  width: 8px;
+  height: 15px;
+  background: rgb(var(--primary-rgb));
+  vertical-align: text-bottom;
+  animation: cursor-blink 1.1s steps(2) infinite;
+}
+@keyframes cursor-blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Upload zone */
+.upload-zone {
+  border: 1px dashed var(--color-border-hover);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.upload-zone:hover,
+.upload-zone.dragging {
+  border-color: rgb(var(--primary-rgb));
+  background-color: rgb(var(--primary-rgb) / 0.05);
+}
+
+/* Accent text (name kept from v1 — now a teal→cyan gradient) */
+.text-gradient {
+  background: linear-gradient(135deg, rgb(var(--primary-rgb)) 0%, rgb(var(--accent-rgb)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Primary action button (name kept from v1 for reuse) */
+.btn-gradient {
+  background: linear-gradient(135deg, #0D9488 0%, #0891B2 100%);
+  transition: all 0.2s ease;
+}
+.btn-gradient:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 24px rgb(var(--primary-rgb) / 0.35);
+}
+
+/* Subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-hover);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Format tags */
+.format-tag {
+  border: 1px solid var(--color-border-hover);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.format-tag::before {
+  content: ".";
+  color: rgb(var(--primary-rgb));
+}
+
+/* Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  background: var(--color-border);
+  border-radius: 0;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgb(var(--primary-rgb));
+  cursor: pointer;
+  border: none;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: rgb(var(--primary-rgb));
+  cursor: pointer;
+  border: none;
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+  <!-- Tile: brand teal-to-cyan gradient -->
+  <rect x="64" y="64" width="896" height="896" rx="200" fill="url(#g)"/>
+  <!-- Inner rounded-square outline (matches app logo mark) -->
+  <rect x="240" y="240" width="544" height="544" rx="96" fill="none" stroke="#FFFFFF" stroke-width="72"/>
+  <!-- Center dot -->
+  <circle cx="512" cy="512" r="96" fill="#FFFFFF"/>
+</svg>
