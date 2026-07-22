@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { IOS_SIZES, ANDROID_SIZES, WEB_SIZES, WINDOWS_SIZES, IconSize, EditSettings, CustomSize } from "@/lib/constants";
 import { renderIcon } from "@/lib/render-icon";
+import { useDevicePixelRatio } from "@/lib/use-device-pixel-ratio";
 
 interface PreviewGridProps {
   imageUrl: string | null;
@@ -13,12 +14,12 @@ interface PreviewGridProps {
 function generatePreview(
   img: HTMLImageElement,
   size: IconSize,
-  settings: EditSettings
+  settings: EditSettings,
+  dpr: number
 ): string {
   // Cap scales with devicePixelRatio so thumbnails stay sharp on high-DPI
   // displays. Sizes below the cap still render at their native resolution
   // (the true-pixel preview for small favicons relies on that).
-  const dpr = window.devicePixelRatio || 1;
   const displaySize = Math.min(size.width, Math.round(80 * dpr));
   const canvas = renderIcon(img, displaySize, displaySize, settings, {
     forceOpaque: size.platform === "ios",
@@ -37,6 +38,7 @@ const platformConfig: { key: string; label: string; sizes: IconSize[]; badgeClas
 export default function PreviewGrid({ imageUrl, settings, customSizes }: PreviewGridProps) {
   const [previews, setPreviews] = useState<Map<string, string>>(new Map());
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const dpr = useDevicePixelRatio();
 
   useEffect(() => {
     if (!imageUrl) return;
@@ -67,13 +69,13 @@ export default function PreviewGrid({ imageUrl, settings, customSizes }: Preview
       allSizes.forEach((size) => {
         const key = `${size.platform}-${size.width}-${size.label}`;
         if (!newPreviews.has(key)) {
-          newPreviews.set(key, generatePreview(img, size, settings));
+          newPreviews.set(key, generatePreview(img, size, settings, dpr));
         }
       });
       setPreviews(newPreviews);
     };
     img.src = imageUrl;
-  }, [imageUrl, settings, customSizes]);
+  }, [imageUrl, settings, customSizes, dpr]);
 
   if (!imageUrl) {
     return (
