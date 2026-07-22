@@ -15,7 +15,11 @@ function generatePreview(
   size: IconSize,
   settings: EditSettings
 ): string {
-  const displaySize = Math.min(size.width, 80);
+  // Cap scales with devicePixelRatio so thumbnails stay sharp on high-DPI
+  // displays. Sizes below the cap still render at their native resolution
+  // (the true-pixel preview for small favicons relies on that).
+  const dpr = window.devicePixelRatio || 1;
+  const displaySize = Math.min(size.width, Math.round(80 * dpr));
   const canvas = renderIcon(img, displaySize, displaySize, settings, {
     forceOpaque: size.platform === "ios",
     blurRadius: 10,
