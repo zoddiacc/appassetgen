@@ -17,7 +17,28 @@ function drawIconOnCanvas(
   settings: EditSettings,
   forceOpaque = false
 ): HTMLCanvasElement {
-  return renderIcon(img, size, size, settings, { forceOpaque, blurRadius: 10 });
+  const px = Math.round(size);
+  return renderIcon(img, px, px, settings, { forceOpaque, blurRadius: 10 });
+}
+
+/**
+ * Size a mockup canvas's backing store for the device pixel ratio and scale
+ * the context so all drawing code stays in CSS-pixel coordinates. Without
+ * this the mockups render blurry on high-DPI displays.
+ */
+function setupMockupCanvas(
+  canvas: HTMLCanvasElement,
+  cssW: number,
+  cssH: number,
+  dpr: number
+): CanvasRenderingContext2D {
+  canvas.width = Math.round(cssW * dpr);
+  canvas.height = Math.round(cssH * dpr);
+  canvas.style.width = `${cssW}px`;
+  canvas.style.height = `${cssH}px`;
+  const ctx = canvas.getContext("2d")!;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return ctx;
 }
 
 export default function DevicePreview({
@@ -42,12 +63,14 @@ export default function DevicePreview({
   useEffect(() => {
     if (!img) return;
 
+    const dpr = window.devicePixelRatio || 1;
+
     // iOS Home Screen mockup
     const iosCanvas = iosCanvasRef.current;
     if (iosCanvas) {
-      const ctx = iosCanvas.getContext("2d")!;
-      const w = iosCanvas.width;
-      const h = iosCanvas.height;
+      const w = 140;
+      const h = 120;
+      const ctx = setupMockupCanvas(iosCanvas, w, h, dpr);
       ctx.clearRect(0, 0, w, h);
 
       // Background
@@ -56,7 +79,7 @@ export default function DevicePreview({
 
       // Draw icon with iOS rounded rect (iOS icons are always opaque)
       const iconSize = 60;
-      const iconCanvas = drawIconOnCanvas(img, iconSize, settings, true);
+      const iconCanvas = drawIconOnCanvas(img, iconSize * dpr, settings, true);
       const ix = (w - iconSize) / 2;
       const iy = 30;
 
@@ -64,7 +87,7 @@ export default function DevicePreview({
       ctx.beginPath();
       ctx.roundRect(ix, iy, iconSize, iconSize, 13);
       ctx.clip();
-      ctx.drawImage(iconCanvas, ix, iy);
+      ctx.drawImage(iconCanvas, ix, iy, iconSize, iconSize);
       ctx.restore();
 
       // Icon border
@@ -84,9 +107,9 @@ export default function DevicePreview({
     // Android launcher mockup
     const androidCanvas = androidCanvasRef.current;
     if (androidCanvas) {
-      const ctx = androidCanvas.getContext("2d")!;
-      const w = androidCanvas.width;
-      const h = androidCanvas.height;
+      const w = 140;
+      const h = 120;
+      const ctx = setupMockupCanvas(androidCanvas, w, h, dpr);
       ctx.clearRect(0, 0, w, h);
 
       ctx.fillStyle = darkMode ? "#121212" : "#fafafa";
@@ -94,7 +117,7 @@ export default function DevicePreview({
 
       // Circle-masked icon
       const iconSize = 56;
-      const iconCanvas = drawIconOnCanvas(img, iconSize, settings);
+      const iconCanvas = drawIconOnCanvas(img, iconSize * dpr, settings);
       const ix = (w - iconSize) / 2;
       const iy = 28;
 
@@ -102,7 +125,7 @@ export default function DevicePreview({
       ctx.beginPath();
       ctx.arc(ix + iconSize / 2, iy + iconSize / 2, iconSize / 2, 0, Math.PI * 2);
       ctx.clip();
-      ctx.drawImage(iconCanvas, ix, iy);
+      ctx.drawImage(iconCanvas, ix, iy, iconSize, iconSize);
       ctx.restore();
 
       // Shadow
@@ -125,9 +148,9 @@ export default function DevicePreview({
     // Web favicon mockup
     const faviconCanvas = faviconCanvasRef.current;
     if (faviconCanvas) {
-      const ctx = faviconCanvas.getContext("2d")!;
-      const w = faviconCanvas.width;
-      const h = faviconCanvas.height;
+      const w = 200;
+      const h = 36;
+      const ctx = setupMockupCanvas(faviconCanvas, w, h, dpr);
       ctx.clearRect(0, 0, w, h);
 
       // Browser tab
@@ -148,7 +171,7 @@ export default function DevicePreview({
       const favSize = 14;
       const favX = tabX + 8;
       const favY = tabY + (tabH - favSize) / 2;
-      const iconCanvas = drawIconOnCanvas(img, favSize, settings);
+      const iconCanvas = drawIconOnCanvas(img, favSize * dpr, settings);
       ctx.drawImage(iconCanvas, favX, favY, favSize, favSize);
 
       // Tab title

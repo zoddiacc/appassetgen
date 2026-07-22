@@ -31,7 +31,10 @@ export default function Canvas({
     if (!canvas || !img) return;
 
     const ctx = canvas.getContext("2d")!;
-    const size = 600;
+    // Render the backing store at device resolution so the preview isn't
+    // upscaled (and blurred) on high-DPI displays; CSS pins it to 600px.
+    const dpr = window.devicePixelRatio || 1;
+    const size = Math.round(600 * dpr);
     canvas.width = size;
     canvas.height = size;
 
@@ -39,7 +42,7 @@ export default function Canvas({
 
     // Theme-aware checkerboard (visible behind transparent areas in preview)
     const [colorA, colorB] = getCheckerboardColors();
-    const tileSize = 15;
+    const tileSize = Math.round(15 * dpr);
     for (let y = 0; y < size; y += tileSize) {
       for (let x = 0; x < size; x += tileSize) {
         ctx.fillStyle =
@@ -97,8 +100,7 @@ export default function Canvas({
         ref={canvasRef}
         width={600}
         height={600}
-        className="max-w-full rounded-xl border border-[var(--color-border)]"
-        style={{ maxHeight: "600px" }}
+        className="w-full max-w-[600px] rounded-xl border border-[var(--color-border)]"
       />
     </div>
   );
