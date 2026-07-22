@@ -3,6 +3,7 @@
 import { useRef, useEffect, useCallback } from "react";
 import { EditSettings } from "@/lib/constants";
 import { renderIcon } from "@/lib/render-icon";
+import { useDevicePixelRatio } from "@/lib/use-device-pixel-ratio";
 
 interface CanvasProps {
   imageUrl: string | null;
@@ -24,6 +25,7 @@ export default function Canvas({
 }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const dpr = useDevicePixelRatio();
 
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -33,7 +35,6 @@ export default function Canvas({
     const ctx = canvas.getContext("2d")!;
     // Render the backing store at device resolution so the preview isn't
     // upscaled (and blurred) on high-DPI displays; CSS pins it to 600px.
-    const dpr = window.devicePixelRatio || 1;
     const size = Math.round(600 * dpr);
     canvas.width = size;
     canvas.height = size;
@@ -54,7 +55,7 @@ export default function Canvas({
     }
 
     ctx.drawImage(renderIcon(img, size, size, settings), 0, 0);
-  }, [settings]);
+  }, [settings, dpr]);
 
   useEffect(() => {
     if (!imageUrl) return;

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { EditSettings } from "@/lib/constants";
 import { renderIcon } from "@/lib/render-icon";
+import { useDevicePixelRatio } from "@/lib/use-device-pixel-ratio";
 
 interface DevicePreviewProps {
   imageUrl: string | null;
@@ -51,6 +52,7 @@ export default function DevicePreview({
   const iosCanvasRef = useRef<HTMLCanvasElement>(null);
   const androidCanvasRef = useRef<HTMLCanvasElement>(null);
   const faviconCanvasRef = useRef<HTMLCanvasElement>(null);
+  const dpr = useDevicePixelRatio();
 
   useEffect(() => {
     if (!imageUrl) return;
@@ -62,8 +64,6 @@ export default function DevicePreview({
 
   useEffect(() => {
     if (!img) return;
-
-    const dpr = window.devicePixelRatio || 1;
 
     // iOS Home Screen mockup
     const iosCanvas = iosCanvasRef.current;
@@ -180,7 +180,7 @@ export default function DevicePreview({
       ctx.textAlign = "left";
       ctx.fillText("My App", favX + favSize + 6, tabY + tabH / 2 + 3);
     }
-  }, [img, settings, darkMode]);
+  }, [img, settings, darkMode, dpr]);
 
   if (!imageUrl) {
     return (
